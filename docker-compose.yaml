@@ -1,0 +1,53 @@
+# version: '3.8'  # not required with Docker Compose v2 format
+
+services:
+  mysql-container:
+    image: mysql:8.0.40-oraclelinux9
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql123
+      MYSQL_DATABASE: school
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pmysql123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: backend/
+    image: backend-image
+    container_name: backend
+    restart: always
+    ports:
+      - "3500:3500"
+    environment:
+      DB_HOST: mysql-container
+      DB_USER: root
+      DB_PASSWORD: mysql123
+      DB_NAME: school
+    depends_on:
+      mysql-container:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: frontend/
+    image: frontend-image
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+
+volumes:
+  mysql-data:
