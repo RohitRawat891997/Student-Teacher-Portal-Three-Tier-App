@@ -18,7 +18,7 @@ docker ps
 Fix Docker permission issue (so you don’t need `sudo` every time):
 
 ```bash
-sudo chown $USER /var/run/docker.sock
+sudo  usermod -aG  docker  ubuntu
 ```
 
 ---
