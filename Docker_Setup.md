@@ -18,7 +18,7 @@ docker ps
 Fix Docker permission issue (so you don’t need `sudo` every time):
 
 ```bash
-sudo  usermod -aG  docker  ubuntu
+sudo  usermod -aG  docker  $USER
 ```
 
 ---
